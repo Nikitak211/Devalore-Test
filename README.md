@@ -72,6 +72,14 @@ cd 3d_project
 python3 orchestrator.py
 ```
 
+Or from repo root via npm:
+
+```bash
+npm start
+# same as:
+npm run orchestrate:sample
+```
+
 Or pass an explicit brief:
 
 ```bash
@@ -98,12 +106,15 @@ python3 3d_project/orchestrator.py briefs/sample_brief.txt \
 ```bash
 # Existing BOM only → DFM profiles + tolerance matrix
 python3 3d_project/orchestrator.py --dfm-tolerance-only
+npm run orchestrate:dfm
 
 # Existing BOM only → OpenSCAD/CadQuery + ASSEMBLY_MANUAL.md
 python3 3d_project/orchestrator.py --cad-docs-only
+npm run orchestrate:cad
 
 # Ingest → DFM → kinematics → tolerance (skip CAD & docs)
 python3 3d_project/orchestrator.py --core-only briefs/sample_brief.txt
+npm run orchestrate:core
 ```
 
 Run partial flags from inside `3d_project/`:
@@ -157,8 +168,9 @@ ls 3d_project/outputs/code/
 cd 3d_project
 python3 -m unittest tests.test_ingestion -v
 
-# From repo root: scaffold completeness
-python3 outputs/scripts/validate_scaffold.py
+# From repo root
+npm test
+npm run validate
 
 # Dry-run hole-compensation template
 python3 outputs/tolerance/_template_hole_compensation.py

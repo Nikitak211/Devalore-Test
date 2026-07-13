@@ -3,7 +3,16 @@
   "version": "1.0.0",
   "description": "3D Engineering Agent — multi-agent manufacturing orchestrator",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "start": "python3 3d_project/orchestrator.py 3d_project/briefs/sample_brief.txt",
+    "orchestrate": "python3 3d_project/orchestrator.py",
+    "orchestrate:sample": "python3 3d_project/orchestrator.py 3d_project/briefs/sample_brief.txt",
+    "orchestrate:core": "python3 3d_project/orchestrator.py --core-only 3d_project/briefs/sample_brief.txt",
+    "orchestrate:dfm": "python3 3d_project/orchestrator.py --dfm-tolerance-only",
+    "orchestrate:cad": "python3 3d_project/orchestrator.py --cad-docs-only",
+    "test": "python3 -m unittest discover -s 3d_project/tests -v",
+    "validate": "python3 outputs/scripts/validate_scaffold.py"
+  },
   "author": "",
   "license": "ISC"
 }
