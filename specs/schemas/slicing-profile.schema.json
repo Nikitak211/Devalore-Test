@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/specs/schemas/slicing-profile.schema.json",
+  "title": "DFM Slicing Profiles",
+  "type": "object",
+  "required": ["project", "process", "profiles"],
+  "properties": {
+    "project": { "type": "string" },
+    "process": {
+      "type": "string",
+      "enum": ["FDM", "SLA", "SLS", "mixed"]
+    },
+    "profiles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["component_id", "stress_class"],
+        "properties": {
+          "component_id": { "type": "string" },
+          "group": { "type": "string" },
+          "stress_class": {
+            "type": "string",
+            "enum": [
+              "structural",
+              "load-bearing",
+              "compliant",
+              "decorative",
+              "tolerance-critical"
+            ]
+          },
+          "process": { "type": "string" },
+          "layer_height_mm": { "type": "number" },
+          "wall_count": { "type": "integer" },
+          "infill_percent": { "type": "number" },
+          "infill_pattern": { "type": "string" },
+          "orientation": { "type": "string" },
+          "adhesion": { "type": "string" },
+          "notes": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

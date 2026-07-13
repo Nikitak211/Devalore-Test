@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/specs/schemas/assembly-state-machine.schema.json",
+  "title": "Assembly State Machine",
+  "type": "object",
+  "required": ["project", "steps"],
+  "properties": {
+    "project": { "type": "string" },
+    "version": { "type": "string" },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["step_id", "title", "requires"],
+        "properties": {
+          "step_id": { "type": "string" },
+          "title": { "type": "string" },
+          "requires": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "components": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "interfaces": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "blocks_if_missing": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

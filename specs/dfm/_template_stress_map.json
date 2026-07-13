@@ -1,0 +1,5 @@
+{
+  "project": "<PROJECT_NAME>",
+  "components": {},
+  "notes": "Map component_id → stress_class after DFM Slicing Agent runs."
+}

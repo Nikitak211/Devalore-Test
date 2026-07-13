@@ -1,0 +1,9 @@
+{
+  "project": "<PROJECT_NAME>",
+  "ingested_at": "ISO-8601",
+  "sources": [],
+  "parser": "ingestion-sub-agent",
+  "component_count": 0,
+  "gaps": [],
+  "notes": "Populate via Ingestion Agent; do not invent design data."
+}
