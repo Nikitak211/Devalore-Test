@@ -1,21 +1,18 @@
 {
-  "name": "devalore",
+  "name": "3d-engineering-agent",
   "version": "1.0.0",
-  "description": "**Submit your favorite pet**",
+  "description": "3D Engineering Agent — multi-agent manufacturing orchestrator",
   "main": "index.js",
   "scripts": {
-    "client": "cd client && npm run yarn",
-    "server": "cd server && npm start",
-    "start": "npm run client && npm run server"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Nikitak211/Devalore.git"
+    "start": "python3 3d_project/orchestrator.py 3d_project/briefs/sample_brief.txt",
+    "orchestrate": "python3 3d_project/orchestrator.py",
+    "orchestrate:sample": "python3 3d_project/orchestrator.py 3d_project/briefs/sample_brief.txt",
+    "orchestrate:core": "python3 3d_project/orchestrator.py --core-only 3d_project/briefs/sample_brief.txt",
+    "orchestrate:dfm": "python3 3d_project/orchestrator.py --dfm-tolerance-only",
+    "orchestrate:cad": "python3 3d_project/orchestrator.py --cad-docs-only",
+    "test": "python3 -m unittest discover -s 3d_project/tests -v",
+    "validate": "python3 outputs/scripts/validate_scaffold.py"
   },
   "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Nikitak211/Devalore/issues"
-  },
-  "homepage": "https://github.com/Nikitak211/Devalore#readme"
+  "license": "ISC"
 }
