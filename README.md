@@ -1,220 +1,152 @@
 # 3D Engineering Agent
 
-Multi-agent manufacturing pipeline that turns unstructured engineering briefs into BOM data, DFM slicing profiles, assembly logic, parametric CAD templates, and assembly manuals.
+Chat with Cursor. Describe what you want to build. The master agent runs the manufacturing pipeline for you.
 
-The Python orchestrator lives under `3d_project/` and is driven by Sol 5.6 Max agent loops defined in `.cursorrules`.
+You do not need to know files, scripts, or CLI flags. One sentence is enough.
 
 ---
 
-## Overview
+## How to use it (Cursor chat)
 
-| Layer | Path | Role |
-|-------|------|------|
-| Master router | `.cursorrules`, `3d_project/orchestrator.py` | Routes briefs through sub-agents and consolidates results |
-| Agent prompts | `agents/`, `3d_project/agents/` | Skill scopes for each sub-agent |
-| Specs & schemas | `specs/`, `3d_project/specs/` | BOM, DFM maps, dependency graphs, JSON Schema contracts |
-| Generated outputs | `outputs/`, `3d_project/outputs/` | Slice profiles, assembly state machines, CAD, manuals |
-
-### Pipeline
-
-1. **Ingestion** — Parse text briefs → universal JSON BOM  
-2. **DFM Slicing** — Stress-class parts → FDM/SLA print parameters  
-3. **Kinematics & Assembly** — Dependency graph, state machine, tolerances  
-4. **CAD Generation** — Parametric OpenSCAD / CadQuery templates  
-5. **Assembly Docs** — Step-by-step `ASSEMBLY_MANUAL.md`  
-6. **Consolidation** — ID coverage, cycle checks, tolerance / feasibility flags  
+Open this project in Cursor and say what you want:
 
 ```text
-brief.txt
-   │
-   ▼
-ingestion_engine.py ──► specs/bom.json
-   │
-   ▼
-dfm_slicing_engine.py ──► outputs/config/slicing_meta.json
-   │
-   ▼
-kinematics_engine.py ──► outputs/config/assembly_logic.json
-   │
-   ▼
-tolerance_test.py ──► outputs/config/tolerance_matrix.json
-   │
-   ▼
-cad_generation_engine.py ──► outputs/code/*.scad, *_cq.py
-   │
-   ▼
-assembly_doc_engine.py ──► outputs/config/ASSEMBLY_MANUAL.md
+create me a box with hinge lid 100mmx100mmx50
 ```
 
----
-
-## Requirements
-
-- Python 3.10+ (stdlib only for the core pipeline)
-
----
-
-## Command prompt examples
-
-### Clone
-
-```bash
-git clone <repository-url>
-cd <repository-directory>
-```
-
-### Full manufacturing run (recommended)
-
-Uses `3d_project/briefs/sample_brief.txt` when no path is given:
-
-```bash
-cd 3d_project
-python3 orchestrator.py
-```
-
-Or from repo root via npm:
-
-```bash
-npm start
-# same as:
-npm run orchestrate:sample
-```
-
-Or pass an explicit brief:
-
-```bash
-cd 3d_project
-python3 orchestrator.py briefs/sample_brief.txt
-```
-
-From repo root:
-
-```bash
-python3 3d_project/orchestrator.py 3d_project/briefs/sample_brief.txt
-```
-
-Custom project name and workspace:
-
-```bash
-python3 3d_project/orchestrator.py briefs/sample_brief.txt \
-  --project-name "My Chassis Assembly" \
-  --workspace /absolute/path/to/3d_project
-```
-
-### Partial verification paths
-
-```bash
-# Existing BOM only → DFM profiles + tolerance matrix
-python3 3d_project/orchestrator.py --dfm-tolerance-only
-npm run orchestrate:dfm
-
-# Existing BOM only → OpenSCAD/CadQuery + ASSEMBLY_MANUAL.md
-python3 3d_project/orchestrator.py --cad-docs-only
-npm run orchestrate:cad
-
-# Ingest → DFM → kinematics → tolerance (skip CAD & docs)
-python3 3d_project/orchestrator.py --core-only briefs/sample_brief.txt
-npm run orchestrate:core
-```
-
-Run partial flags from inside `3d_project/`:
-
-```bash
-cd 3d_project
-python3 orchestrator.py --dfm-tolerance-only
-python3 orchestrator.py --cad-docs-only
-python3 orchestrator.py --core-only briefs/sample_brief.txt
-```
-
-### Run with your own brief
-
-```bash
-# 1. Add a brief
-cat > 3d_project/briefs/my_design.txt <<'EOF'
-PRINT REQUIREMENTS:
-2x hinge pins - PETG
-1 enclosure shell - PLA
-
-ASSEMBLY INDEX:
-Step 1: Press fit hinge pins into enclosure shell.
-EOF
-
-# 2. Execute pipeline
-python3 3d_project/orchestrator.py 3d_project/briefs/my_design.txt \
-  --project-name "Hinge Enclosure"
-```
-
-### Inspect generated artifacts
-
-```bash
-# BOM + consolidation
-cat 3d_project/specs/bom.json
-cat 3d_project/specs/consolidation_report.json
-
-# Manufacturing configs
-cat 3d_project/outputs/config/slicing_meta.json
-cat 3d_project/outputs/config/assembly_logic.json
-cat 3d_project/outputs/config/tolerance_matrix.json
-cat 3d_project/outputs/config/ASSEMBLY_MANUAL.md
-
-# CAD templates
-ls 3d_project/outputs/code/
-```
-
-### Tests & scaffold validation
-
-```bash
-# Ingestion unit tests
-cd 3d_project
-python3 -m unittest tests.test_ingestion -v
-
-# From repo root
-npm test
-npm run validate
-
-# Dry-run hole-compensation template
-python3 outputs/tolerance/_template_hole_compensation.py
-```
-
-### Cursor kickoff prompt
-
-Paste the block in [`agents/GLOBAL_EXECUTION_PROMPT.md`](agents/GLOBAL_EXECUTION_PROMPT.md), or use:
+Other examples:
 
 ```text
-Initialize the 3D Engineering Agent using Sol 5.6 Max architecture.
-Prefer: python3 3d_project/orchestrator.py <path-to-brief>
+design a phone stand, 80mm wide, 60mm deep, 100mm tall, snap-fit base
+```
+
+```text
+make 4 PETG axle pins and a PLA chassis that they press-fit into
+```
+
+```text
+hinged enclosure 120x80x40mm, wall 2mm, screw lid
+```
+
+That is the full input. The master agent takes over from there.
+
+---
+
+## What happens behind the scenes
+
+The master agent (`.cursorrules`) reads your chat message and delegates to sub-agents:
+
+| Step | Sub-agent | What it does |
+|------|-----------|--------------|
+| 1 | Ingestion | Turns your sentence into a structured BOM |
+| 2 | DFM Slicing | Chooses materials, orientation, walls, infill |
+| 3 | Kinematics | Maps assembly order, fits, clearances |
+| 4 | CAD Generation | Writes OpenSCAD / CadQuery templates |
+| 5 | Assembly Docs | Writes a step-by-step assembly manual |
+| 6 | Consolidation | Checks IDs, tolerances, and print feasibility |
+
+You get artifacts under `3d_project/` when it finishes. You only review results in chat.
+
+```text
+you (chat)
+   │
+   ▼
+Master 3D Engineering Agent
+   ├── Ingestion
+   ├── DFM Slicing
+   ├── Kinematics & Assembly
+   ├── CAD Generation
+   └── Assembly Docs
+   │
+   ▼
+BOM · slicing profiles · CAD · assembly manual
 ```
 
 ---
 
-## Directory map
+## Setup for Cursor
+
+1. Open this repo in Cursor.
+2. Keep `.cursorrules` active (project rules).
+3. Optionally pin or reference [`agents/GLOBAL_EXECUTION_PROMPT.md`](agents/GLOBAL_EXECUTION_PROMPT.md) once so the agent knows the chat-first contract.
+4. Chat normally — describe the part, dimensions, material, and any fit/function notes.
+
+You should not need to run commands yourself. If the agent needs the Python pipeline, it runs that for you.
+
+---
+
+## What to say (cheat sheet)
+
+Include whatever you know; skip what you do not:
+
+- **What** — box, pin, clip, enclosure, hinge lid, …
+- **Size** — `100mm x 100mm x 50mm`
+- **Count** — `4x pins`, `12 clips`
+- **Material** — PLA / PETG / TPU (optional)
+- **How it fits** — press-fit, snap, screw, hinge (optional)
+
+Bad (too much ceremony):
+
+```text
+Please initialize the orchestrator and run orchestrator.py on briefs/foo.txt
+```
+
+Good:
+
+```text
+create me a box with hinge lid 100mmx100mmx50
+```
+
+---
+
+## Where outputs land
+
+| Output | Path |
+|--------|------|
+| BOM | `3d_project/specs/bom.json` |
+| Consolidation report | `3d_project/specs/consolidation_report.json` |
+| Slice settings | `3d_project/outputs/config/slicing_meta.json` |
+| Assembly logic | `3d_project/outputs/config/assembly_logic.json` |
+| Tolerances | `3d_project/outputs/config/tolerance_matrix.json` |
+| Assembly manual | `3d_project/outputs/config/ASSEMBLY_MANUAL.md` |
+| CAD templates | `3d_project/outputs/code/` |
+
+Ask the agent in chat to open or summarize any of these.
+
+---
+
+## Project layout (for the agent)
 
 ```text
 .
-├── .cursorrules                 # Orchestrator runtime rules
-├── 3d-orchestrator.md           # Architecture notes
-├── 3d_project/                  # Production Python pipeline
+├── .cursorrules                 # Master agent rules — chat → sub-agents
+├── agents/
+│   ├── GLOBAL_EXECUTION_PROMPT.md
+│   ├── ingestion.md
+│   ├── dfm-slicing.md
+│   └── kinematics-assembly.md
+├── 3d_project/                  # Engines + generated artifacts
 │   ├── orchestrator.py
 │   ├── *_engine.py
 │   ├── agents/*.prompt
 │   ├── briefs/
 │   ├── specs/
-│   ├── outputs/{code,config}/
-│   └── tests/
-├── agents/                      # Human-readable sub-agent docs
-├── specs/                       # Shared schemas + mirrored manifests
-└── outputs/                     # Shared slicing/assembly/tolerance templates
+│   └── outputs/
+├── specs/                       # Shared schemas / templates
+└── outputs/                     # Shared output templates
 ```
 
 ---
 
-## Further reading
+## Agent contract
 
-- [`3d_project/README.md`](3d_project/README.md) — Python orchestrator details  
-- [`agents/README.md`](agents/README.md) — Sub-agent registry  
-- [`specs/README.md`](specs/README.md) — Manifest & schema layout  
-- [`outputs/README.md`](outputs/README.md) — Generated artifact layout  
-- [`agents/GLOBAL_EXECUTION_PROMPT.md`](agents/GLOBAL_EXECUTION_PROMPT.md) — Full Cursor execution prompt  
+See [`agents/GLOBAL_EXECUTION_PROMPT.md`](agents/GLOBAL_EXECUTION_PROMPT.md).
+
+Short version for Cursor:
+
+- Treat every casual build request as a full pipeline job.
+- Do not ask the user to run CLI unless they explicitly want to.
+- Save their words into a brief, run the sub-agent chain, report results in chat.
 
 ## License
 
