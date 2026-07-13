@@ -26,6 +26,22 @@ REQUIRED_PATHS = [
     ROOT / "outputs" / "slicing" / "_template_profiles.json",
     ROOT / "outputs" / "assembly" / "_template_state_machine.json",
     ROOT / "outputs" / "tolerance" / "_template_hole_compensation.py",
+    # Production Python orchestrator (3d_project)
+    ROOT / "3d_project" / "orchestrator.py",
+    ROOT / "3d_project" / "ingestion_engine.py",
+    ROOT / "3d_project" / "dfm_slicing_engine.py",
+    ROOT / "3d_project" / "dfm_engine.py",
+    ROOT / "3d_project" / "kinematics_engine.py",
+    ROOT / "3d_project" / "cad_generation_engine.py",
+    ROOT / "3d_project" / "assembly_doc_engine.py",
+    ROOT / "3d_project" / "agents" / "ingestion.prompt",
+    ROOT / "3d_project" / "agents" / "dfm_slicing.prompt",
+    ROOT / "3d_project" / "agents" / "kinematics.prompt",
+    ROOT / "3d_project" / "agents" / "cad_generation.prompt",
+    ROOT / "3d_project" / "agents" / "assembly_doc.prompt",
+    ROOT / "3d_project" / "specs" / "bom.schema.json",
+    ROOT / "3d_project" / "briefs" / "sample_brief.txt",
+    ROOT / "3d_project" / "outputs" / "code" / "tolerance_test.py",
 ]
 
 AGENT_MARKERS = {
@@ -46,12 +62,13 @@ def main() -> int:
     if cursorrules.exists():
         text = cursorrules.read_text(encoding="utf-8")
         for needle in (
-            "Master 3D Engineering Orchestrator",
+            "Multi-Agent Orchestrator",
+            "DIRECTORY OPERATIONS CONSTRAINTS",
+            "SUB-AGENT PIPELINE SEQUENCE",
             "/specs",
             "/agents",
             "/outputs",
-            "INGESTION",
-            "TRIAGE & DELEGATION",
+            "3d_project",
             "CONSOLIDATION",
         ):
             if needle not in text:

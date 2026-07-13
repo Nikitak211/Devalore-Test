@@ -1,0 +1,143 @@
+{
+    "project_name": "Dynamic 3D Mechanical Assembly",
+    "manufacturing_platform": "FDM_Optimized",
+    "slicing_strategy": "optimized_per_mechanical_stress",
+    "generated_at": "2026-07-13T19:44:57Z",
+    "orchestrator_version": "Sol-5.6-Max-PyOrch",
+    "component_profiles": {
+        "COMP-480DDD": {
+            "name": "drive axle pins",
+            "quantity": 4,
+            "print_parameters": {
+                "layer_height_mm": 0.16,
+                "wall_loops": 5,
+                "infill_percentage": 40,
+                "infill_pattern": "gyroid",
+                "cooling_speed_pct": 30,
+                "target_material": "PETG",
+                "mechanical_profile": "load-bearing",
+                "requires_tolerance_tuning": true,
+                "volumetric_metrics": {
+                    "relative_density_score": 68.0,
+                    "wall_fraction_estimate": 0.625,
+                    "infill_fraction": 0.4
+                }
+            }
+        },
+        "COMP-FE73BA": {
+            "name": "main outer chassis casing",
+            "quantity": 1,
+            "print_parameters": {
+                "layer_height_mm": 0.2,
+                "wall_loops": 4,
+                "infill_percentage": 25,
+                "infill_pattern": "grid",
+                "cooling_speed_pct": 100,
+                "target_material": "PLA",
+                "mechanical_profile": "structural",
+                "requires_tolerance_tuning": false,
+                "volumetric_metrics": {
+                    "relative_density_score": 49.5,
+                    "wall_fraction_estimate": 0.5,
+                    "infill_fraction": 0.25
+                }
+            }
+        },
+        "COMP-BD4146": {
+            "name": "snap clips",
+            "quantity": 12,
+            "print_parameters": {
+                "layer_height_mm": 0.2,
+                "wall_loops": 3,
+                "infill_percentage": 20,
+                "infill_pattern": "concentric",
+                "cooling_speed_pct": 100,
+                "target_material": "TPU",
+                "mechanical_profile": "compliant",
+                "requires_tolerance_tuning": true,
+                "volumetric_metrics": {
+                    "relative_density_score": 38.0,
+                    "wall_fraction_estimate": 0.375,
+                    "infill_fraction": 0.2
+                }
+            }
+        }
+    },
+    "profiles": [
+        {
+            "component_id": "COMP-480DDD",
+            "name": "drive axle pins",
+            "mechanical_profile": "load-bearing",
+            "material_hint": "PETG",
+            "wall_loops": 5,
+            "layer_height_mm": 0.16,
+            "infill_percentage": 40,
+            "infill_pattern": "gyroid",
+            "print_parameters": {
+                "layer_height_mm": 0.16,
+                "wall_loops": 5,
+                "infill_percentage": 40,
+                "infill_pattern": "gyroid",
+                "cooling_speed_pct": 30,
+                "target_material": "PETG",
+                "mechanical_profile": "load-bearing",
+                "requires_tolerance_tuning": true,
+                "volumetric_metrics": {
+                    "relative_density_score": 68.0,
+                    "wall_fraction_estimate": 0.625,
+                    "infill_fraction": 0.4
+                }
+            }
+        },
+        {
+            "component_id": "COMP-FE73BA",
+            "name": "main outer chassis casing",
+            "mechanical_profile": "structural",
+            "material_hint": "PLA",
+            "wall_loops": 4,
+            "layer_height_mm": 0.2,
+            "infill_percentage": 25,
+            "infill_pattern": "grid",
+            "print_parameters": {
+                "layer_height_mm": 0.2,
+                "wall_loops": 4,
+                "infill_percentage": 25,
+                "infill_pattern": "grid",
+                "cooling_speed_pct": 100,
+                "target_material": "PLA",
+                "mechanical_profile": "structural",
+                "requires_tolerance_tuning": false,
+                "volumetric_metrics": {
+                    "relative_density_score": 49.5,
+                    "wall_fraction_estimate": 0.5,
+                    "infill_fraction": 0.25
+                }
+            }
+        },
+        {
+            "component_id": "COMP-BD4146",
+            "name": "snap clips",
+            "mechanical_profile": "compliant",
+            "material_hint": "TPU",
+            "wall_loops": 3,
+            "layer_height_mm": 0.2,
+            "infill_percentage": 20,
+            "infill_pattern": "concentric",
+            "print_parameters": {
+                "layer_height_mm": 0.2,
+                "wall_loops": 3,
+                "infill_percentage": 20,
+                "infill_pattern": "concentric",
+                "cooling_speed_pct": 100,
+                "target_material": "TPU",
+                "mechanical_profile": "compliant",
+                "requires_tolerance_tuning": true,
+                "volumetric_metrics": {
+                    "relative_density_score": 38.0,
+                    "wall_fraction_estimate": 0.375,
+                    "infill_fraction": 0.2
+                }
+            }
+        }
+    ]
+}

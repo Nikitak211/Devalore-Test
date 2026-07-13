@@ -1,0 +1,50 @@
+{
+  "assembly_validation_tree": "sequential_dependency_graph",
+  "generated_at": "2026-07-13T19:44:57Z",
+  "orchestrator_version": "Sol-5.6-Max-PyOrch",
+  "nodes": [
+    {
+      "node_id": "COMP-480DDD",
+      "name": "drive axle pins",
+      "quantity": 4,
+      "tolerance_critical": true
+    },
+    {
+      "node_id": "COMP-FE73BA",
+      "name": "main outer chassis casing",
+      "quantity": 1,
+      "tolerance_critical": false
+    },
+    {
+      "node_id": "COMP-BD4146",
+      "name": "snap clips",
+      "quantity": 12,
+      "tolerance_critical": true
+    }
+  ],
+  "edges": [
+    {
+      "from": "COMP-FE73BA",
+      "to": "COMP-480DDD",
+      "via_step": "1"
+    }
+  ],
+  "steps": [
+    {
+      "step_number": 1,
+      "instruction": "Step 1: Press fit drive axle pins into the outer chassis casing.",
+      "prerequisite_components": [
+        "COMP-FE73BA",
+        "COMP-480DDD"
+      ]
+    },
+    {
+      "step_number": 2,
+      "instruction": "Step 2: Snap locking clips along outer body track lines.",
+      "prerequisite_components": [
+        "COMP-BD4146"
+      ]
+    }
+  ],
+  "brief_fingerprint_chars": 289
+}

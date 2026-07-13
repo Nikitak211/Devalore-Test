@@ -1,0 +1,28 @@
+{
+  "consolidated_at": "2026-07-13T19:44:57Z",
+  "component_count": 3,
+  "assembly_step_count": 2,
+  "slicing_profile_count": 3,
+  "tolerance_critical_count": 2,
+  "load_bearing_vs_structural_walls_distinct": true,
+  "wall_loops_by_profile": {
+    "load-bearing": 5,
+    "structural": 4,
+    "compliant": 3
+  },
+  "tolerance_critical_ids": [
+    "COMP-480DDD",
+    "COMP-BD4146"
+  ],
+  "artifacts": {
+    "bom": "specs/bom.json",
+    "slicing_meta": "outputs/config/slicing_meta.json",
+    "assembly_logic": "outputs/config/assembly_logic.json",
+    "tolerance_matrix": "outputs/config/tolerance_matrix.json",
+    "tolerance_test": "outputs/code/tolerance_test.py",
+    "assembly_manual": "outputs/config/ASSEMBLY_MANUAL.md",
+    "cad_templates": "outputs/code/*_{name}.scad|.py"
+  },
+  "cad_file_count": 6,
+  "assembly_manual": "outputs/config/ASSEMBLY_MANUAL.md"
+}

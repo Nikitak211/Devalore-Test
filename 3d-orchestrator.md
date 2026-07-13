@@ -5,8 +5,21 @@ Generalized multi-agent framework for analyzing **any** 3D model project or engi
 ## Architecture
 
 ```
-.cursorrules                 # Master Router / Orchestrator
-/agents                      # Sub-agent system prompts + skill maps
+.cursorrules                 # Master Router / Orchestrator runtime rules
+/3d_project                  # Production Python orchestrator + engines
+  orchestrator.py
+  ingestion_engine.py
+  dfm_slicing_engine.py
+  kinematics_engine.py
+  cad_generation_engine.py
+  assembly_doc_engine.py
+  agents/*.prompt
+  specs/bom.json
+  outputs/code/tolerance_test.py
+  outputs/code/*.scad
+  outputs/config/ASSEMBLY_MANUAL.md
+  outputs/config/
+/agents                      # Sub-agent system prompts + skill maps (docs)
   ingestion.md
   dfm-slicing.md
   kinematics-assembly.md
@@ -30,9 +43,17 @@ Generalized multi-agent framework for analyzing **any** 3D model project or engi
 3. **Kinematics & Assembly** — Interface map, state machine, hole-compensation tests
 4. **Consolidation** — Orchestrator checks ID coverage, cycles, tolerance conflicts, feasibility
 
+## Run the Python orchestrator
+
+```bash
+cd 3d_project
+python orchestrator.py briefs/sample_brief.txt
+python -m unittest tests.test_ingestion -v
+```
+
 ## Kick off in Cursor
 
-Paste the prompt from [`agents/GLOBAL_EXECUTION_PROMPT.md`](agents/GLOBAL_EXECUTION_PROMPT.md) and attach your project data.
+Paste the prompt from [`agents/GLOBAL_EXECUTION_PROMPT.md`](agents/GLOBAL_EXECUTION_PROMPT.md) and attach your project data — or run the verification prompt in [`3d_project/README.md`](3d_project/README.md).
 
 ## Validate scaffold
 
@@ -43,7 +64,7 @@ python outputs/tolerance/_template_hole_compensation.py
 
 ## How to run a project
 
-1. Drop source notes/images into a working area (or attach in Cursor).
-2. Invoke the Global Execution Prompt.
-3. Agents write into `/specs` and `/outputs` using the `_template_*` files as shapes.
+1. Drop source notes into `3d_project/briefs/` (or attach in Cursor).
+2. Run `python 3d_project/orchestrator.py <brief>` or invoke the Global Execution Prompt.
+3. Agents write into `/3d_project/specs`, `/3d_project/outputs`, and mirrored `/specs` + `/outputs` trees.
 4. Review the Orchestrator consolidation report before manufacturing.
