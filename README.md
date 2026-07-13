@@ -1,4 +1,4 @@
-# Devalore — Master 3D Engineering Orchestrator
+# Master 3D Engineering Orchestrator
 
 Multi-agent manufacturing pipeline that turns unstructured engineering briefs into BOM data, DFM slicing profiles, assembly logic, parametric CAD templates, and assembly manuals.
 
@@ -68,8 +68,8 @@ assembly_doc_engine.py ──► outputs/config/ASSEMBLY_MANUAL.md
 ### Clone
 
 ```bash
-git clone https://github.com/Nikitak211/Devalore-Test.git
-cd Devalore-Test
+git clone <repository-url>
+cd <repository-directory>
 ```
 
 ### Full manufacturing run (recommended)
@@ -198,7 +198,7 @@ cd ../client && npm install
 Create `server/.env`:
 
 ```bash
-MONGODB_URI=mongodb://localhost:27017/devalore
+MONGODB_URI=mongodb://localhost:27017/pets
 PORT=7000
 ```
 

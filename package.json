@@ -1,21 +1,13 @@
 {
-  "name": "devalore",
+  "name": "master-3d-orchestrator",
   "version": "1.0.0",
-  "description": "**Submit your favorite pet**",
+  "description": "Master 3D Engineering Orchestrator and Pets web app",
   "main": "index.js",
   "scripts": {
     "client": "cd client && npm run yarn",
     "server": "cd server && npm start",
     "start": "npm run client && npm run server"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Nikitak211/Devalore.git"
-  },
   "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Nikitak211/Devalore/issues"
-  },
-  "homepage": "https://github.com/Nikitak211/Devalore#readme"
+  "license": "ISC"
 }
