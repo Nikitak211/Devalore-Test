@@ -1,13 +1,9 @@
 {
-  "name": "master-3d-orchestrator",
+  "name": "3d-engineering-agent",
   "version": "1.0.0",
-  "description": "Master 3D Engineering Orchestrator and Pets web app",
+  "description": "3D Engineering Agent — multi-agent manufacturing orchestrator",
   "main": "index.js",
-  "scripts": {
-    "client": "cd client && npm run yarn",
-    "server": "cd server && npm start",
-    "start": "npm run client && npm run server"
-  },
+  "scripts": {},
   "author": "",
   "license": "ISC"
 }

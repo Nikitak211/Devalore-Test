@@ -1,8 +1,8 @@
-# Master 3D Engineering Orchestrator
+# 3D Engineering Agent
 
 Multi-agent manufacturing pipeline that turns unstructured engineering briefs into BOM data, DFM slicing profiles, assembly logic, parametric CAD templates, and assembly manuals.
 
-This repository also includes a legacy **Pets** web app (React + Express + MongoDB). The primary system is the Sol 5.6 Max orchestrator under `3d_project/`.
+The Python orchestrator lives under `3d_project/` and is driven by Sol 5.6 Max agent loops defined in `.cursorrules`.
 
 ---
 
@@ -14,7 +14,6 @@ This repository also includes a legacy **Pets** web app (React + Express + Mongo
 | Agent prompts | `agents/`, `3d_project/agents/` | Skill scopes for each sub-agent |
 | Specs & schemas | `specs/`, `3d_project/specs/` | BOM, DFM maps, dependency graphs, JSON Schema contracts |
 | Generated outputs | `outputs/`, `3d_project/outputs/` | Slice profiles, assembly state machines, CAD, manuals |
-| Legacy web app | `client/`, `server/` | Pets submission UI + API |
 
 ### Pipeline
 
@@ -51,15 +50,7 @@ assembly_doc_engine.py ──► outputs/config/ASSEMBLY_MANUAL.md
 
 ## Requirements
 
-### 3D Orchestrator
-
 - Python 3.10+ (stdlib only for the core pipeline)
-
-### Pets web app (optional)
-
-- Node.js + npm
-- MongoDB
-- `.env` in `server/` with `MONGODB_URI` (and optional `PORT`)
 
 ---
 
@@ -178,51 +169,9 @@ python3 outputs/tolerance/_template_hole_compensation.py
 Paste the block in [`agents/GLOBAL_EXECUTION_PROMPT.md`](agents/GLOBAL_EXECUTION_PROMPT.md), or use:
 
 ```text
-Initialize the Master 3D Engineering Orchestrator using Sol 5.6 Max architecture.
+Initialize the 3D Engineering Agent using Sol 5.6 Max architecture.
 Prefer: python3 3d_project/orchestrator.py <path-to-brief>
 ```
-
----
-
-## Pets web app (legacy)
-
-### Install
-
-```bash
-cd server && npm install
-cd ../client && npm install
-```
-
-### Configure
-
-Create `server/.env`:
-
-```bash
-MONGODB_URI=mongodb://localhost:27017/pets
-PORT=7000
-```
-
-### Run
-
-```bash
-# Terminal 1 — API (nodemon)
-cd server && npm start
-
-# Terminal 2 — React client (dev)
-cd client && npm start
-
-# Or production-style: build client, then serve via Express
-cd client && npm run build
-cd ../server && npm start
-```
-
-From repo root (runs client build, then server):
-
-```bash
-npm start
-```
-
-Open [http://localhost:7000](http://localhost:7000).
 
 ---
 
@@ -242,9 +191,7 @@ Open [http://localhost:7000](http://localhost:7000).
 │   └── tests/
 ├── agents/                      # Human-readable sub-agent docs
 ├── specs/                       # Shared schemas + mirrored manifests
-├── outputs/                     # Shared slicing/assembly/tolerance templates
-├── client/                      # Pets React app
-└── server/                      # Pets Express API
+└── outputs/                     # Shared slicing/assembly/tolerance templates
 ```
 
 ---
