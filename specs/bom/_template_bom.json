@@ -1,0 +1,25 @@
+{
+  "project": "<PROJECT_NAME>",
+  "manifest_version": "1.0.0",
+  "source": "<brief | print_notes | image OCR | CAD meta-data>",
+  "printer_family": "unknown",
+  "default_material": "unknown",
+  "hole_compensation_mm": 0.15,
+  "validation": {
+    "expected_component_count": 0,
+    "bom_matches_manifest": false,
+    "gaps": ["Replace this template after Ingestion Agent runs"]
+  },
+  "bom": [
+    {
+      "component_id": "01",
+      "name": "<part name>",
+      "quantity": 1,
+      "material_constraint": "unknown",
+      "tolerance_test_required": false,
+      "notes": [],
+      "depends_on": [],
+      "source_refs": []
+    }
+  ]
+}

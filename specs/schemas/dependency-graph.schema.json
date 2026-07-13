@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/specs/schemas/dependency-graph.schema.json",
+  "title": "Mechanical Dependency Graph",
+  "type": "object",
+  "required": ["project", "nodes", "edges"],
+  "properties": {
+    "project": { "type": "string" },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind"],
+        "properties": {
+          "id": { "type": "string" },
+          "kind": {
+            "type": "string",
+            "enum": ["component", "step", "interface", "subassembly"]
+          },
+          "label": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from", "to", "relation"],
+        "properties": {
+          "from": { "type": "string" },
+          "to": { "type": "string" },
+          "relation": {
+            "type": "string",
+            "enum": [
+              "depends_on",
+              "mates_with",
+              "precedes",
+              "contains",
+              "requires_clearance"
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "acyclic": { "type": "boolean" }
+  },
+  "additionalProperties": true
+}

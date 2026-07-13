@@ -1,0 +1,7 @@
+{
+  "project": "<PROJECT_NAME>",
+  "nodes": [],
+  "edges": [],
+  "acyclic": true,
+  "notes": "Raw edges from notes only until Kinematics Agent synthesizes the full graph."
+}
