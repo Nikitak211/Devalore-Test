@@ -15,6 +15,8 @@ if str(ROOT) not in sys.path:
 
 from ingestion_engine import IngestionSubAgent  # noqa: E402
 from dfm_slicing_engine import DFMSlicingAgent  # noqa: E402
+from cad_generation_engine import CADGenerationAgent  # noqa: E402
+from assembly_doc_engine import AssemblyDocAgent  # noqa: E402
 from orchestrator import MasterOrchestrator  # noqa: E402
 
 CODE_DIR = ROOT / "outputs" / "code"
@@ -165,6 +167,39 @@ class TestToleranceValidator(unittest.TestCase):
             self.assertTrue(out.exists())
 
 
+class TestCADAndDocs(unittest.TestCase):
+    def test_cad_and_manual_generation(self) -> None:
+        parser = IngestionSubAgent()
+        bom = parser.parse_text_brief(
+            SAMPLE, project_name="Dynamic 3D Mechanical Assembly"
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            workspace = Path(tmp)
+            (workspace / "specs").mkdir()
+            (workspace / "outputs" / "code").mkdir(parents=True)
+            (workspace / "outputs" / "config").mkdir(parents=True)
+            (workspace / "specs" / "bom.json").write_text(
+                json.dumps(bom, indent=2), encoding="utf-8"
+            )
+
+            cad = CADGenerationAgent(workspace_dir=str(workspace))
+            files = cad.generate_parametric_cad_templates(bom_data=bom)
+            self.assertEqual(len(files), 6)  # 3 scad + 3 cq
+            scad = [p for p in files if p.endswith(".scad")]
+            self.assertEqual(len(scad), 3)
+            sample = Path(scad[0]).read_text(encoding="utf-8")
+            self.assertIn("hole_compensation", sample)
+            self.assertIn("module generate_", sample)
+
+            docs = AssemblyDocAgent(workspace_dir=str(workspace))
+            manual = docs.compile_markdown_manual(bom_data=bom)
+            self.assertIsNotNone(manual)
+            text = Path(manual).read_text(encoding="utf-8")  # type: ignore[arg-type]
+            self.assertIn("Physical Assembly Manual", text)
+            self.assertIn("drive axle pins", text)
+            self.assertIn("Phase 1", text)
+
+
 class TestOrchestrator(unittest.TestCase):
     def test_full_pipeline_writes_artifacts(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -175,17 +210,21 @@ class TestOrchestrator(unittest.TestCase):
             brief_path.write_text(SAMPLE, encoding="utf-8")
 
             orch = MasterOrchestrator(workspace_dir=str(workspace))
-            result = orch.route_to_sub_agents(brief_path)
+            result = orch.execute_full_engineering_run(brief_path)
 
             bom_path = workspace / "specs" / "bom.json"
             slicing_path = workspace / "outputs" / "config" / "slicing_meta.json"
             tolerance_path = workspace / "outputs" / "config" / "tolerance_matrix.json"
             assembly_path = workspace / "outputs" / "config" / "assembly_logic.json"
+            manual_path = workspace / "outputs" / "config" / "ASSEMBLY_MANUAL.md"
 
             self.assertTrue(bom_path.exists())
             self.assertTrue(slicing_path.exists())
             self.assertTrue(tolerance_path.exists())
             self.assertTrue(assembly_path.exists())
+            self.assertTrue(manual_path.exists())
+            self.assertEqual(len(result["cad_files"]), 6)
+            self.assertTrue(any(p.endswith(".scad") for p in result["cad_files"]))
 
             bom = json.loads(bom_path.read_text(encoding="utf-8"))
             self.assertEqual(len(bom["components"]), 3)

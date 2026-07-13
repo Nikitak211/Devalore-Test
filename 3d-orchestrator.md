@@ -11,9 +11,13 @@ Generalized multi-agent framework for analyzing **any** 3D model project or engi
   ingestion_engine.py
   dfm_slicing_engine.py
   kinematics_engine.py
+  cad_generation_engine.py
+  assembly_doc_engine.py
   agents/*.prompt
   specs/bom.json
   outputs/code/tolerance_test.py
+  outputs/code/*.scad
+  outputs/config/ASSEMBLY_MANUAL.md
   outputs/config/
 /agents                      # Sub-agent system prompts + skill maps (docs)
   ingestion.md

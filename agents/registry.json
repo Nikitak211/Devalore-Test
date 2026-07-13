@@ -43,7 +43,28 @@
         "outputs/assembly/",
         "outputs/tolerance/"
       ]
+    },
+    {
+      "id": "cad-generation",
+      "role": "Parametric OpenSCAD / CadQuery Template Generator",
+      "runtime_prompt": "3d_project/agents/cad_generation.prompt",
+      "engine": "3d_project/cad_generation_engine.py",
+      "writes": ["3d_project/outputs/code/*.scad", "3d_project/outputs/code/*_cq.py"]
+    },
+    {
+      "id": "assembly-docs",
+      "role": "Interactive Assembly Manual Compiler",
+      "runtime_prompt": "3d_project/agents/assembly_doc.prompt",
+      "engine": "3d_project/assembly_doc_engine.py",
+      "writes": ["3d_project/outputs/config/ASSEMBLY_MANUAL.md"]
     }
   ],
-  "pipeline": ["ingestion", "dfm-slicing", "kinematics-assembly", "consolidation"]
+  "pipeline": [
+    "ingestion",
+    "dfm-slicing",
+    "kinematics-assembly",
+    "cad-generation",
+    "assembly-docs",
+    "consolidation"
+  ]
 }

@@ -8,55 +8,43 @@ through specialized sub-agent execution loops.
 ```text
 3d_project/
 ├── orchestrator.py              # Master controller / router
-├── ingestion_engine.py          # Ingestion & BOM parsing engine
-├── dfm_slicing_engine.py        # Production DFM slicing agent
-├── dfm_engine.py                # Compatibility shim → dfm_slicing_engine
-├── kinematics_engine.py         # Assembly graph generator
-├── briefs/
-│   └── sample_brief.txt
-├── specs/
-│   ├── bom.json
-│   ├── bom.schema.json
-│   └── consolidation_report.json
-├── agents/
-│   ├── ingestion.prompt
-│   ├── dfm_slicing.prompt
-│   └── kinematics.prompt
+├── ingestion_engine.py
+├── dfm_slicing_engine.py
+├── kinematics_engine.py
+├── cad_generation_engine.py     # OpenSCAD / CadQuery templates
+├── assembly_doc_engine.py       # ASSEMBLY_MANUAL.md compiler
+├── briefs/sample_brief.txt
+├── specs/bom.json
+├── agents/*.prompt
 └── outputs/
-    ├── code/
-    │   └── tolerance_test.py    # ToleranceValidator framework
-    └── config/
-        ├── slicing_meta.json
-        ├── assembly_logic.json
-        └── tolerance_matrix.json
+    ├── code/                    # *.scad, *_cq.py, tolerance_test.py
+    └── config/                  # slicing_meta, tolerance_matrix, ASSEMBLY_MANUAL.md
 ```
 
-## Full pipeline
+## Full manufacturing run (default)
 
 ```bash
 cd 3d_project
 python3 orchestrator.py briefs/sample_brief.txt
 ```
 
-## DFM + Tolerance only (verification prompt)
+## Partial verification paths
 
 ```bash
-cd 3d_project
 python3 orchestrator.py --dfm-tolerance-only
-# or:
-python3 dfm_slicing_engine.py
-python3 outputs/code/tolerance_test.py
+python3 orchestrator.py --cad-docs-only
+python3 orchestrator.py --core-only briefs/sample_brief.txt
 ```
 
 ## Cursor verification prompt
 
 ```text
-Run the DFMSlicingAgent execution logic on the existing 'specs/bom.json' dataset.
+Run the full updated MasterOrchestrator architecture pipeline using the Sol 5.6 Max context loops.
 
-Verify that structural and load-bearing components receive distinct wall-count
-profiles and layer metrics inside the 'outputs/config/slicing_meta.json' matrix
-structure. Once written, invoke the tolerance validator step-matrix framework
-to output geometric gap definitions for components flagged for tolerance testing.
+Ingest our structural engineering components dataset, map the internal geometry flags,
+compile the matching parametric OpenSCAD scripts down into '/outputs/code/', and generate
+our step-by-step interactive Markdown manual file inside '/outputs/config/'. Verify all
+code interfaces exit cleanly with zero dependency exceptions.
 ```
 
 ## Tests

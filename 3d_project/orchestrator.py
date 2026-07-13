@@ -19,6 +19,8 @@ from typing import Any
 from ingestion_engine import IngestionSubAgent
 from dfm_slicing_engine import DFMSlicingAgent
 from kinematics_engine import KinematicsAssemblySubAgent
+from cad_generation_engine import CADGenerationAgent
+from assembly_doc_engine import AssemblyDocAgent
 
 # Tolerance validator lives under outputs/code/ per architecture contract
 _CODE_DIR = Path(__file__).resolve().parent / "outputs" / "code"
@@ -48,6 +50,8 @@ class MasterOrchestrator:
         self.dfm = DFMSlicingAgent(workspace_dir=str(self.workspace))
         self.kinematics = KinematicsAssemblySubAgent()
         self.tolerance = ToleranceValidator(workspace_dir=str(self.workspace))
+        self.cad = CADGenerationAgent(workspace_dir=str(self.workspace))
+        self.docs = AssemblyDocAgent(workspace_dir=str(self.workspace))
 
     def _init_workspace(self) -> None:
         for folder in self.dirs:
@@ -100,12 +104,57 @@ class MasterOrchestrator:
             "tolerance_matrix": tolerance_matrix,
         }
 
+    def execute_full_engineering_run(
+        self,
+        engineering_brief_path: str | Path,
+        project_name: str = "Dynamic 3D Mechanical Assembly",
+    ) -> dict[str, Any]:
+        """Full manufacturing architecture: ingest → DFM → kinematics → CAD → docs."""
+        result = self.route_to_sub_agents(
+            engineering_brief_path, project_name=project_name
+        )
+
+        print("[Sub-Agent] Activating CAD Generation Agent...")
+        cad_files = self.cad.generate_parametric_cad_templates(bom_data=result["bom"])
+
+        print("[Sub-Agent] Activating Assembly Documentation Agent...")
+        manual_path = self.docs.compile_markdown_manual(bom_data=result["bom"])
+
+        result["cad_files"] = cad_files
+        result["assembly_manual"] = manual_path
+
+        # Extend consolidation report with CAD / docs artifacts
+        report_path = self.workspace / "specs" / "consolidation_report.json"
+        report: dict[str, Any] = {}
+        if report_path.exists():
+            report = json.loads(report_path.read_text(encoding="utf-8"))
+        report["cad_file_count"] = len(cad_files)
+        report["assembly_manual"] = (
+            str(Path(manual_path).relative_to(self.workspace))
+            if manual_path
+            else None
+        )
+        artifacts = report.setdefault("artifacts", {})
+        artifacts["assembly_manual"] = "outputs/config/ASSEMBLY_MANUAL.md"
+        artifacts["cad_templates"] = "outputs/code/*_{name}.scad|.py"
+        report_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+
+        print("\n[Orchestration Complete] Full manufacturing architecture generated.")
+        return result
+
     def run_dfm_and_tolerance_only(self) -> dict[str, Any]:
         """Verification path: process existing specs/bom.json without re-ingestion."""
         print("[Orchestrator] Running DFM + Tolerance against existing BOM...")
         slicing = self.dfm.process_bom_to_slicing_profiles()
         tolerance = self.tolerance.generate_parametric_clearance_matrix()
         return {"slicing_profiles": slicing, "tolerance_matrix": tolerance}
+
+    def run_cad_and_docs_only(self) -> dict[str, Any]:
+        """Generate CAD templates + assembly manual from existing BOM."""
+        print("[Orchestrator] Running CAD + Assembly Docs against existing BOM...")
+        cad_files = self.cad.generate_parametric_cad_templates()
+        manual = self.docs.compile_markdown_manual()
+        return {"cad_files": cad_files, "assembly_manual": manual}
 
     def _run_ingestion_agent(
         self, brief: str, project_name: str
@@ -159,7 +208,6 @@ class MasterOrchestrator:
             json.dump(assembly, handle, indent=2)
             handle.write("\n")
 
-        # Distinct wall/layer check for structural vs load-bearing
         walls: dict[str, int] = {}
         for cid, entry in slicing.get("component_profiles", {}).items():
             params = entry["print_parameters"]
@@ -200,11 +248,7 @@ class MasterOrchestrator:
             handle.write("\n")
 
         print(f"[Orchestrator] Project structured successfully inside: {self.workspace}")
-        print("[Orchestrator] Artifacts: specs/bom.json, outputs/config/slicing_meta.json,")
-        print(
-            "              outputs/config/tolerance_matrix.json, "
-            "outputs/code/tolerance_test.py"
-        )
+        print("[Orchestrator] Core artifacts written under specs/ and outputs/config/")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -232,12 +276,26 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Run DFMSlicingAgent + ToleranceValidator against existing specs/bom.json",
     )
+    parser.add_argument(
+        "--cad-docs-only",
+        action="store_true",
+        help="Run CADGenerationAgent + AssemblyDocAgent against existing specs/bom.json",
+    )
+    parser.add_argument(
+        "--core-only",
+        action="store_true",
+        help="Run ingest→DFM→kinematics→tolerance without CAD/docs",
+    )
     args = parser.parse_args(argv)
 
     orch = MasterOrchestrator(workspace_dir=args.workspace)
 
     if args.dfm_tolerance_only:
         orch.run_dfm_and_tolerance_only()
+        return 0
+
+    if args.cad_docs_only:
+        orch.run_cad_and_docs_only()
         return 0
 
     brief = args.brief
@@ -248,7 +306,10 @@ def main(argv: list[str] | None = None) -> int:
         print(f"[Orchestrator] ERROR: brief not found: {brief}", file=sys.stderr)
         return 1
 
-    orch.route_to_sub_agents(brief, project_name=args.project_name)
+    if args.core_only:
+        orch.route_to_sub_agents(brief, project_name=args.project_name)
+    else:
+        orch.execute_full_engineering_run(brief, project_name=args.project_name)
     return 0
 
 
