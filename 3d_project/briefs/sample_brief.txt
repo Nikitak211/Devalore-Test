@@ -1,0 +1,8 @@
+PRINT REQUIREMENTS:
+4x drive axle pins - print in high strength PETG
+1 main outer chassis casing - PLA standard
+12 snap clips (flexible tpu material)
+
+ASSEMBLY INDEX:
+Step 1: Press fit drive axle pins into the outer chassis casing.
+Step 2: Snap locking clips along outer body track lines.

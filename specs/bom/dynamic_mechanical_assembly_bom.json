@@ -1,0 +1,60 @@
+{
+  "project_metadata": {
+    "project_name": "Dynamic 3D Mechanical Assembly",
+    "timestamp": "2026-07-13T19:40:32Z",
+    "orchestrator_version": "Sol-5.6-Max-PyOrch",
+    "parser_version": "Sol-5.6-Max"
+  },
+  "components": [
+    {
+      "component_id": "COMP-46CFD2",
+      "name": "drive axle pins",
+      "quantity": 4,
+      "raw_text_context": "4x drive axle pins - print in high strength PETG",
+      "manufacturing": {
+        "material_hint": "PETG",
+        "mechanical_profile": "load-bearing",
+        "requires_tolerance_tuning": true
+      }
+    },
+    {
+      "component_id": "COMP-2BBEC9",
+      "name": "main outer chassis casing",
+      "quantity": 1,
+      "raw_text_context": "1 main outer chassis casing - PLA standard",
+      "manufacturing": {
+        "material_hint": "PLA",
+        "mechanical_profile": "structural",
+        "requires_tolerance_tuning": false
+      }
+    },
+    {
+      "component_id": "COMP-F6BB37",
+      "name": "snap clips",
+      "quantity": 12,
+      "raw_text_context": "12 snap clips (flexible tpu material)",
+      "manufacturing": {
+        "material_hint": "TPU",
+        "mechanical_profile": "compliant",
+        "requires_tolerance_tuning": true
+      }
+    }
+  ],
+  "assembly_steps": [
+    {
+      "step_number": 1,
+      "instruction": "Step 1: Press fit drive axle pins into the outer chassis casing.",
+      "prerequisite_components": [
+        "COMP-2BBEC9",
+        "COMP-46CFD2"
+      ]
+    },
+    {
+      "step_number": 2,
+      "instruction": "Step 2: Snap locking clips along outer body track lines.",
+      "prerequisite_components": [
+        "COMP-F6BB37"
+      ]
+    }
+  ]
+}

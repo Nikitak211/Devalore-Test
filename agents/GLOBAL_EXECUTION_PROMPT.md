@@ -7,10 +7,12 @@ Paste the block below into Cursor when you upload a new 3D model project or engi
 ```text
 Initialize the Master 3D Engineering Orchestrator using Sol 5.6 Max architecture.
 
+Prefer the Python pipeline: `python 3d_project/orchestrator.py <path-to-brief>`.
+
 Review the attached project data and execute the multi-agent pipeline:
-1. Activate the 'Ingestion Agent' to parse the documents and generate a universal JSON BOM structure.
-2. Activate the 'DFM Slicing Agent' to evaluate the mechanical needs of the parsed components and draft slicing strategies.
-3. Activate the 'Kinematics Agent' to map out the assembly state machine, logical dependencies, and required tolerance parameters.
+1. Activate the 'Ingestion Agent' (`ingestion_engine.py`) to parse the documents and generate a universal JSON BOM structure into `3d_project/specs/bom.json`.
+2. Activate the 'DFM Slicing Agent' (`dfm_engine.py`) to evaluate the mechanical needs of the parsed components and draft slicing strategies into `3d_project/outputs/config/slicing_meta.json`.
+3. Activate the 'Kinematics Agent' (`kinematics_engine.py`) to map out the assembly state machine, logical dependencies, and required tolerance parameters into `3d_project/outputs/config/assembly_logic.json` and `3d_project/outputs/code/tolerance_test.py`.
 
 Present the consolidated output structured by sub-agent, ready to copy into our decoupled workspace directory.
 ```

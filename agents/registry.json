@@ -1,24 +1,42 @@
 {
   "framework": "Sol 5.6 Max Master 3D Engineering Orchestrator",
   "orchestrator": ".cursorrules",
+  "python_runtime": "3d_project/orchestrator.py",
   "agents": [
     {
       "id": "ingestion",
       "role": "Text/Image Parser & Manifest Validator",
       "prompt": "agents/ingestion.md",
-      "writes": ["specs/bom/", "specs/manifests/", "specs/dependencies/"]
+      "runtime_prompt": "3d_project/agents/ingestion.prompt",
+      "engine": "3d_project/ingestion_engine.py",
+      "writes": [
+        "3d_project/specs/bom.json",
+        "specs/bom/",
+        "specs/manifests/",
+        "specs/dependencies/"
+      ]
     },
     {
       "id": "dfm-slicing",
       "role": "Geometric Slicing & Volumetric Optimization Engineer",
       "prompt": "agents/dfm-slicing.md",
-      "writes": ["specs/dfm/", "outputs/slicing/"]
+      "runtime_prompt": "3d_project/agents/dfm_slicing.prompt",
+      "engine": "3d_project/dfm_engine.py",
+      "writes": [
+        "3d_project/outputs/config/slicing_meta.json",
+        "specs/dfm/",
+        "outputs/slicing/"
+      ]
     },
     {
       "id": "kinematics-assembly",
       "role": "Mechanical Assembly Logic & Tolerancing Engineer",
       "prompt": "agents/kinematics-assembly.md",
+      "runtime_prompt": "3d_project/agents/kinematics.prompt",
+      "engine": "3d_project/kinematics_engine.py",
       "writes": [
+        "3d_project/outputs/config/assembly_logic.json",
+        "3d_project/outputs/code/tolerance_test.py",
         "specs/dependencies/",
         "outputs/assembly/",
         "outputs/tolerance/"

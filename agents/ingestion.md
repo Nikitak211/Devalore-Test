@@ -15,22 +15,28 @@ You are the Ingestion Sub-Agent. Analyze the provided project files. Isolate eve
 - CAD meta-data (part names, counts, materials when present)
 - Optional prior `/specs/manifests/*.json` for incremental updates
 
+## Production Engine
+Prefer `/3d_project/ingestion_engine.py` (invoked by `/3d_project/orchestrator.py`) for text-brief parsing. System prompt: `/3d_project/agents/ingestion.prompt`. Target schema: `/3d_project/specs/bom.schema.json`.
+
 ## Outputs
-Write under `/specs`:
-- `/specs/bom/<project>_bom.json` — validated BOM (schema: `/specs/schemas/bom.schema.json`)
+Write under `/3d_project/specs` and mirrored `/specs`:
+- `/3d_project/specs/bom.json` — universal BOM (schema: `/3d_project/specs/bom.schema.json`)
+- `/specs/bom/<project>_bom.json` — validated BOM mirror (schema: `/specs/schemas/bom.schema.json`)
 - `/specs/manifests/<project>_manifest.json` — ingestion provenance + validation summary
 - `/specs/dependencies/<project>_raw_deps.json` — raw parent/child edges inferred from notes (no design invent)
 
-## BOM Record Shape
+## BOM Record Shape (PyOrch)
 ```json
 {
-  "component_id": "01",
-  "name": "chassis",
-  "quantity": 1,
-  "material_constraint": "PLA",
-  "notes": ["Primary structural backbone"],
-  "depends_on": [],
-  "source_refs": ["print_notes:L3"]
+  "component_id": "COMP-001",
+  "name": "drive axle pin",
+  "quantity": 4,
+  "raw_text_context": "4x drive axle pins - print in high strength PETG",
+  "manufacturing": {
+    "material_hint": "PETG",
+    "mechanical_profile": "load-bearing",
+    "requires_tolerance_tuning": true
+  }
 }
 ```
 

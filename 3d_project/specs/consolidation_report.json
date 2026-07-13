@@ -1,0 +1,16 @@
+{
+  "consolidated_at": "2026-07-13T19:40:32Z",
+  "component_count": 3,
+  "assembly_step_count": 2,
+  "slicing_profile_count": 3,
+  "tolerance_critical_ids": [
+    "COMP-46CFD2",
+    "COMP-F6BB37"
+  ],
+  "artifacts": {
+    "bom": "specs/bom.json",
+    "slicing_meta": "outputs/config/slicing_meta.json",
+    "assembly_logic": "outputs/config/assembly_logic.json",
+    "tolerance_test": "outputs/code/tolerance_test.py"
+  }
+}
