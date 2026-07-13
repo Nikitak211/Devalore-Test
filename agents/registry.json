@@ -21,7 +21,7 @@
       "role": "Geometric Slicing & Volumetric Optimization Engineer",
       "prompt": "agents/dfm-slicing.md",
       "runtime_prompt": "3d_project/agents/dfm_slicing.prompt",
-      "engine": "3d_project/dfm_engine.py",
+      "engine": "3d_project/dfm_slicing_engine.py",
       "writes": [
         "3d_project/outputs/config/slicing_meta.json",
         "specs/dfm/",
@@ -34,8 +34,10 @@
       "prompt": "agents/kinematics-assembly.md",
       "runtime_prompt": "3d_project/agents/kinematics.prompt",
       "engine": "3d_project/kinematics_engine.py",
+      "tolerance_framework": "3d_project/outputs/code/tolerance_test.py",
       "writes": [
         "3d_project/outputs/config/assembly_logic.json",
+        "3d_project/outputs/config/tolerance_matrix.json",
         "3d_project/outputs/code/tolerance_test.py",
         "specs/dependencies/",
         "outputs/assembly/",

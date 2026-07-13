@@ -7,15 +7,16 @@ through specialized sub-agent execution loops.
 
 ```text
 3d_project/
-├── orchestrator.py           # Master controller / router
-├── ingestion_engine.py       # Ingestion & BOM parsing engine
-├── dfm_engine.py             # DFM slicing profile generator
-├── kinematics_engine.py      # Assembly graph + tolerance script generator
+├── orchestrator.py              # Master controller / router
+├── ingestion_engine.py          # Ingestion & BOM parsing engine
+├── dfm_slicing_engine.py        # Production DFM slicing agent
+├── dfm_engine.py                # Compatibility shim → dfm_slicing_engine
+├── kinematics_engine.py         # Assembly graph generator
 ├── briefs/
-│   └── sample_brief.txt      # Example raw engineering text
+│   └── sample_brief.txt
 ├── specs/
-│   ├── bom.json              # Structured BOM (generated)
-│   ├── bom.schema.json       # JSON Schema for BOM
+│   ├── bom.json
+│   ├── bom.schema.json
 │   └── consolidation_report.json
 ├── agents/
 │   ├── ingestion.prompt
@@ -23,42 +24,44 @@ through specialized sub-agent execution loops.
 │   └── kinematics.prompt
 └── outputs/
     ├── code/
-    │   └── tolerance_test.py
+    │   └── tolerance_test.py    # ToleranceValidator framework
     └── config/
         ├── slicing_meta.json
-        └── assembly_logic.json
+        ├── assembly_logic.json
+        └── tolerance_matrix.json
 ```
 
-## Run the pipeline
+## Full pipeline
 
 ```bash
 cd 3d_project
-python orchestrator.py briefs/sample_brief.txt
+python3 orchestrator.py briefs/sample_brief.txt
 ```
 
-## Run ingestion only
+## DFM + Tolerance only (verification prompt)
 
 ```bash
 cd 3d_project
-python ingestion_engine.py
+python3 orchestrator.py --dfm-tolerance-only
+# or:
+python3 dfm_slicing_engine.py
+python3 outputs/code/tolerance_test.py
+```
+
+## Cursor verification prompt
+
+```text
+Run the DFMSlicingAgent execution logic on the existing 'specs/bom.json' dataset.
+
+Verify that structural and load-bearing components receive distinct wall-count
+profiles and layer metrics inside the 'outputs/config/slicing_meta.json' matrix
+structure. Once written, invoke the tolerance validator step-matrix framework
+to output geometric gap definitions for components flagged for tolerance testing.
 ```
 
 ## Tests
 
 ```bash
 cd 3d_project
-python -m unittest tests.test_ingestion -v
-```
-
-## Cursor verification prompt
-
-```text
-Run the IngestionSubAgent script logic using the Sol 5.6 Max context.
-
-Review the raw text input block pasted below, convert it to our target
-structured components dictionary map schema, and execute file creation tasks
-down into 'specs/bom.json'. Ensure all functional part tolerances are evaluated
-accurately based on mechanical usage keywords.
-
-[PASTE YOUR RAW TEXT MANIFEST HERE]
+python3 -m unittest tests.test_ingestion -v
 ```

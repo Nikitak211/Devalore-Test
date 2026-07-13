@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Unit tests for IngestionSubAgent parsing and orchestrator consolidation."""
+"""Unit tests for Ingestion, DFM slicing, tolerance, and orchestrator pipeline."""
 
 from __future__ import annotations
 
@@ -14,7 +14,13 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from ingestion_engine import IngestionSubAgent  # noqa: E402
+from dfm_slicing_engine import DFMSlicingAgent  # noqa: E402
 from orchestrator import MasterOrchestrator  # noqa: E402
+
+CODE_DIR = ROOT / "outputs" / "code"
+if str(CODE_DIR) not in sys.path:
+    sys.path.insert(0, str(CODE_DIR))
+from tolerance_test import ToleranceValidator  # noqa: E402
 
 
 SAMPLE = """
@@ -87,6 +93,78 @@ class TestIngestionSubAgent(unittest.TestCase):
         self.assertIn("timestamp", meta)
 
 
+class TestDFMSlicingAgent(unittest.TestCase):
+    def test_distinct_wall_loops_for_structural_vs_load_bearing(self) -> None:
+        parser = IngestionSubAgent()
+        bom = parser.parse_text_brief(SAMPLE)
+        with tempfile.TemporaryDirectory() as tmp:
+            workspace = Path(tmp)
+            (workspace / "specs").mkdir()
+            (workspace / "outputs" / "config").mkdir(parents=True)
+            agent = DFMSlicingAgent(workspace_dir=str(workspace))
+            meta = agent.process_bom_to_slicing_profiles(bom_data=bom)
+
+            walls = {
+                e["print_parameters"]["mechanical_profile"]: e["print_parameters"][
+                    "wall_loops"
+                ]
+                for e in meta["component_profiles"].values()
+            }
+            layers = {
+                e["print_parameters"]["mechanical_profile"]: e["print_parameters"][
+                    "layer_height_mm"
+                ]
+                for e in meta["component_profiles"].values()
+            }
+
+            self.assertEqual(walls["load-bearing"], 5)
+            self.assertEqual(walls["structural"], 4)
+            self.assertNotEqual(walls["load-bearing"], walls["structural"])
+            self.assertEqual(layers["load-bearing"], 0.16)
+            self.assertEqual(layers["structural"], 0.20)
+
+            # PETG cooling override
+            pins = next(
+                e
+                for e in meta["component_profiles"].values()
+                if e["name"] == "drive axle pins"
+            )
+            self.assertEqual(pins["print_parameters"]["cooling_speed_pct"], 30)
+            self.assertEqual(pins["print_parameters"]["infill_pattern"], "gyroid")
+
+            # TPU concentric override
+            clips = next(
+                e
+                for e in meta["component_profiles"].values()
+                if e["name"] == "snap clips"
+            )
+            self.assertEqual(clips["print_parameters"]["infill_pattern"], "concentric")
+
+            out = workspace / "outputs" / "config" / "slicing_meta.json"
+            self.assertTrue(out.exists())
+
+
+class TestToleranceValidator(unittest.TestCase):
+    def test_step_matrix_for_flagged_parts(self) -> None:
+        parser = IngestionSubAgent()
+        bom = parser.parse_text_brief(SAMPLE)
+        with tempfile.TemporaryDirectory() as tmp:
+            workspace = Path(tmp)
+            (workspace / "outputs" / "config").mkdir(parents=True)
+            validator = ToleranceValidator(workspace_dir=str(workspace))
+            matrix = validator.generate_parametric_clearance_matrix(
+                bom_data=bom, silent=True
+            )
+            self.assertEqual(len(matrix["components"]), 2)
+            by_name = {c["name"]: c for c in matrix["components"]}
+            self.assertEqual(by_name["drive axle pins"]["nominal_default_gap_mm"], 0.15)
+            self.assertEqual(by_name["drive axle pins"]["test_matrix_tight_mm"], 0.10)
+            self.assertEqual(by_name["drive axle pins"]["test_matrix_loose_mm"], 0.20)
+            self.assertEqual(by_name["snap clips"]["nominal_default_gap_mm"], 0.25)
+            out = workspace / "outputs" / "config" / "tolerance_matrix.json"
+            self.assertTrue(out.exists())
+
+
 class TestOrchestrator(unittest.TestCase):
     def test_full_pipeline_writes_artifacts(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -101,7 +179,7 @@ class TestOrchestrator(unittest.TestCase):
 
             bom_path = workspace / "specs" / "bom.json"
             slicing_path = workspace / "outputs" / "config" / "slicing_meta.json"
-            tolerance_path = workspace / "outputs" / "code" / "tolerance_test.py"
+            tolerance_path = workspace / "outputs" / "config" / "tolerance_matrix.json"
             assembly_path = workspace / "outputs" / "config" / "assembly_logic.json"
 
             self.assertTrue(bom_path.exists())
@@ -111,16 +189,19 @@ class TestOrchestrator(unittest.TestCase):
 
             bom = json.loads(bom_path.read_text(encoding="utf-8"))
             self.assertEqual(len(bom["components"]), 3)
-            self.assertEqual(len(result["slicing_profiles"]["profiles"]), 3)
+            self.assertEqual(len(result["slicing_profiles"]["component_profiles"]), 3)
 
-            # Prerequisites should be linked for step 1 (pins + chassis)
             step1 = bom["assembly_steps"][0]
             self.assertGreaterEqual(len(step1["prerequisite_components"]), 2)
 
-            # Tolerance script should mention load-bearing / compliant parts
-            script = tolerance_path.read_text(encoding="utf-8")
-            self.assertIn("TOLERANCE_CRITICAL_PARTS", script)
-            self.assertIn("HOLE_COMPENSATION_MM", script)
+            slicing = json.loads(slicing_path.read_text(encoding="utf-8"))
+            walls = {
+                e["print_parameters"]["mechanical_profile"]: e["print_parameters"][
+                    "wall_loops"
+                ]
+                for e in slicing["component_profiles"].values()
+            }
+            self.assertNotEqual(walls["load-bearing"], walls["structural"])
 
 
 if __name__ == "__main__":

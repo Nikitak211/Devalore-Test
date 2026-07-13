@@ -1,0 +1,28 @@
+{
+  "generated_at": "2026-07-13T19:42:52Z",
+  "orchestrator_version": "Sol-5.6-Max-PyOrch",
+  "units": "mm",
+  "note": "Use these offsets inside your OpenSCAD/CadQuery design definitions.",
+  "components": [
+    {
+      "component_id": "COMP-46CFD2",
+      "name": "drive axle pins",
+      "mechanical_profile": "load-bearing",
+      "material_hint": "PETG",
+      "nominal_default_gap_mm": 0.15,
+      "test_matrix_tight_mm": 0.1,
+      "test_matrix_loose_mm": 0.2,
+      "recommended_fit": "press_to_slip"
+    },
+    {
+      "component_id": "COMP-F6BB37",
+      "name": "snap clips",
+      "mechanical_profile": "compliant",
+      "material_hint": "TPU",
+      "nominal_default_gap_mm": 0.25,
+      "test_matrix_tight_mm": 0.2,
+      "test_matrix_loose_mm": 0.3,
+      "recommended_fit": "flexible_clearance"
+    }
+  ]
+}

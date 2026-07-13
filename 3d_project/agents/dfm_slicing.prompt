@@ -9,38 +9,42 @@ mechanical stress class. Do not redesign geometry.
 - `specs/bom.json` components[].manufacturing.mechanical_profile
 - Material hints from the BOM
 
+# ENGINE
+Prefer `python dfm_slicing_engine.py` (or `python orchestrator.py --dfm-tolerance-only`).
+
 # OUTPUT CONTRACT
 Write `outputs/config/slicing_meta.json`:
 
 ```json
 {
-  "slicing_strategy": "optimized_per_mechanical_stress",
-  "profiles": [
-    {
-      "component_id": "COMP-XXXXXX",
-      "mechanical_profile": "load-bearing",
-      "slicing": {
+  "project_name": "...",
+  "manufacturing_platform": "FDM_Optimized",
+  "component_profiles": {
+    "COMP-XXXXXX": {
+      "name": "drive axle pins",
+      "print_parameters": {
         "layer_height_mm": 0.16,
-        "wall_count": 4,
-        "infill_percent": 60,
+        "wall_loops": 5,
+        "infill_percentage": 40,
         "infill_pattern": "gyroid",
-        "orientation_hint": "axis_horizontal_max_layer_adhesion"
+        "cooling_speed_pct": 30,
+        "target_material": "PETG"
       }
     }
-  ]
+  }
 }
 ```
 
 # PROFILE MATRIX GUIDANCE
-| Profile | Walls | Infill | Layer |
-|---------|-------|--------|-------|
-| load-bearing | 4+ | ≥50% gyroid | ≤0.16 |
-| structural | 3 | ~30% grid | 0.2 |
-| compliant | 2 | ~15% | 0.16 |
-| cosmetic | 2 | ~15% lines | 0.12 |
+| Profile | wall_loops | Infill | Layer | Cooling |
+|---------|------------|--------|-------|---------|
+| load-bearing | 5 | 40% gyroid | 0.16 | 40 (30 if PETG/ABS) |
+| structural | 4 | 25% grid | 0.20 | 100 |
+| compliant | 3 | 20% concentric | 0.20 | 100 |
+| cosmetic | 2 | 15% lightning | 0.12 | 100 |
 
 # RULES
-1. Every BOM component_id must appear exactly once in profiles[].
-2. Prefer layer adhesion strategies for load-bearing shafts/pins.
-3. Prefer elasticity-preserving settings for TPU/compliant clips.
-4. Prefer executing `dfm_engine.py` via `orchestrator.py`.
+1. Every BOM component_id must appear exactly once under component_profiles.
+2. Structural and load-bearing components MUST receive distinct wall_loops and layer metrics.
+3. PETG/ABS → force cooling_speed_pct = 30; TPU → force concentric infill.
+4. Prefer executing `dfm_slicing_engine.py` via `orchestrator.py`.

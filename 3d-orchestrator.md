@@ -9,11 +9,12 @@ Generalized multi-agent framework for analyzing **any** 3D model project or engi
 /3d_project                  # Production Python orchestrator + engines
   orchestrator.py
   ingestion_engine.py
-  dfm_engine.py
+  dfm_slicing_engine.py
   kinematics_engine.py
   agents/*.prompt
   specs/bom.json
-  outputs/{code,config}/
+  outputs/code/tolerance_test.py
+  outputs/config/
 /agents                      # Sub-agent system prompts + skill maps (docs)
   ingestion.md
   dfm-slicing.md

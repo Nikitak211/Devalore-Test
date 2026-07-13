@@ -29,6 +29,7 @@ REQUIRED_PATHS = [
     # Production Python orchestrator (3d_project)
     ROOT / "3d_project" / "orchestrator.py",
     ROOT / "3d_project" / "ingestion_engine.py",
+    ROOT / "3d_project" / "dfm_slicing_engine.py",
     ROOT / "3d_project" / "dfm_engine.py",
     ROOT / "3d_project" / "kinematics_engine.py",
     ROOT / "3d_project" / "agents" / "ingestion.prompt",
@@ -36,6 +37,7 @@ REQUIRED_PATHS = [
     ROOT / "3d_project" / "agents" / "kinematics.prompt",
     ROOT / "3d_project" / "specs" / "bom.schema.json",
     ROOT / "3d_project" / "briefs" / "sample_brief.txt",
+    ROOT / "3d_project" / "outputs" / "code" / "tolerance_test.py",
 ]
 
 AGENT_MARKERS = {
