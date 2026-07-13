@@ -1,0 +1,67 @@
+{
+  "project": "Fidget Tank Mechanical Monster",
+  "type": "assembly_state_machine",
+  "entry": "step_1",
+  "terminal": "complete",
+  "hard_rules": [
+    "Cannot install wheels/sprockets before track pods are seated on chassis pegs",
+    "Clicker leaf (10) must be PETG",
+    "BOM unique component count must equal 13 before Step 1 gate"
+  ],
+  "steps": [
+    {
+      "id": "step_1",
+      "name": "Inspect & Kit",
+      "requires": [],
+      "unlocks": ["step_2"],
+      "validations": ["bom_quantities_match", "unique_components_eq_13"]
+    },
+    {
+      "id": "step_2",
+      "name": "Chassis Prep",
+      "requires": ["step_1"],
+      "unlocks": ["step_3", "step_6"],
+      "validations": ["chassis_pegs_ok", "clicker_cavity_clear"]
+    },
+    {
+      "id": "step_3",
+      "name": "Mount Track Pods",
+      "requires": ["step_2"],
+      "unlocks": ["step_4"],
+      "validations": ["pod_lh_seated", "pod_rh_seated", "axle_bores_coaxial"]
+    },
+    {
+      "id": "step_4",
+      "name": "Install Axle Pins",
+      "requires": ["step_3"],
+      "unlocks": ["step_5"],
+      "validations": ["axles_free_spin", "clip_grooves_exposed"]
+    },
+    {
+      "id": "step_5",
+      "name": "Wheels, Sprockets & C-Clips",
+      "requires": ["step_3", "step_4"],
+      "unlocks": ["step_7"],
+      "validations": [
+        "road_wheels_mounted",
+        "sprockets_mounted",
+        "c_clips_seated",
+        "tracks_articulated"
+      ]
+    },
+    {
+      "id": "step_6",
+      "name": "Clicker Leaf PETG",
+      "requires": ["step_2"],
+      "unlocks": ["step_7"],
+      "validations": ["material_is_petg", "click_cycles_ok"]
+    },
+    {
+      "id": "step_7",
+      "name": "Turret Stack & Final QC",
+      "requires": ["step_5", "step_6"],
+      "unlocks": ["complete"],
+      "validations": ["turret_yaw_free", "barrel_seated", "hatch_seated", "full_qc_pass"]
+    }
+  ]
+}

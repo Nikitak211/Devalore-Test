@@ -1,0 +1,62 @@
+{
+  "project": "Fidget Tank Mechanical Monster",
+  "printer_type": "FDM",
+  "nozzle_mm": 0.4,
+  "profiles": [
+    {
+      "group_id": "structural_pla",
+      "applies_to": ["01", "02", "03", "04", "06", "07", "08", "09", "11", "12", "13"],
+      "material": "PLA",
+      "mechanical_stress": "static_structural",
+      "layer_height_mm": 0.2,
+      "walls": 3,
+      "top_bottom_layers": 4,
+      "infill_percent": 20,
+      "infill_pattern": "gyroid",
+      "supports": false,
+      "brim": false,
+      "notes": "Default structural chassis/drivetrain stack"
+    },
+    {
+      "group_id": "axle_clip_tolerance",
+      "applies_to": ["05"],
+      "material": "PLA",
+      "mechanical_stress": "snap_fit",
+      "layer_height_mm": 0.16,
+      "walls": 4,
+      "top_bottom_layers": 5,
+      "infill_percent": 40,
+      "infill_pattern": "rectilinear",
+      "supports": false,
+      "brim": true,
+      "hole_compensation_mm": 0.15,
+      "notes": "C-clips: thinner layers + higher walls for snap toughness; print with axle/bore cal set"
+    },
+    {
+      "group_id": "fatigue_petg_clicker",
+      "applies_to": ["10"],
+      "material": "PETG",
+      "mechanical_stress": "cyclic_fatigue",
+      "layer_height_mm": 0.2,
+      "walls": 4,
+      "top_bottom_layers": 5,
+      "infill_percent": 100,
+      "infill_pattern": "rectilinear",
+      "supports": false,
+      "brim": false,
+      "print_orientation": "layer_lines parallel to flex axis avoided — orient leaf flat with bend across layers minimized per CAD export note",
+      "notes": "Clicker leaf MUST be PETG; solid infill for flexural life"
+    },
+    {
+      "group_id": "bore_calibration_set",
+      "applies_to": ["04", "05", "06", "07", "08"],
+      "material": "PLA",
+      "mechanical_stress": "tolerance_validation",
+      "layer_height_mm": 0.2,
+      "walls": 3,
+      "infill_percent": 20,
+      "hole_compensation_mm_sweeps": [0.0, 0.1, 0.15, 0.2, 0.25],
+      "notes": "Print paired pin/clip/bore coupons; select compensation that yields free spin + secure clip"
+    }
+  ]
+}

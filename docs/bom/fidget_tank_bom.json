@@ -1,0 +1,129 @@
+{
+  "project": "Fidget Tank Mechanical Monster",
+  "manifest_version": "1.0.0",
+  "source": "PRINT QUANTITIES + PRINT NOTES (physical manifest)",
+  "printer_family": "FDM",
+  "default_material": "PLA",
+  "hole_compensation_mm": 0.15,
+  "validation": {
+    "expected_component_count": 13,
+    "expected_assembly_steps": 7,
+    "bom_matches_manifest": true
+  },
+  "bom": [
+    {
+      "component_id": "01",
+      "name": "chassis",
+      "quantity": 1,
+      "material_override": "PLA",
+      "tolerance_test_required": false,
+      "notes": "Primary structural backbone; includes chassis pegs for track pods"
+    },
+    {
+      "component_id": "02",
+      "name": "track pod LH",
+      "quantity": 1,
+      "material_override": "PLA",
+      "tolerance_test_required": true,
+      "notes": "Left track pod; seats on chassis pegs before wheels/axles"
+    },
+    {
+      "component_id": "03",
+      "name": "track pod RH",
+      "quantity": 1,
+      "material_override": "PLA",
+      "tolerance_test_required": true,
+      "notes": "Right track pod; mirror of LH; seats on chassis pegs"
+    },
+    {
+      "component_id": "04",
+      "name": "road wheel",
+      "quantity": 4,
+      "material_override": "PLA",
+      "tolerance_test_required": true,
+      "notes": "Axle-bore critical; requires hole compensation pairing with axle pins"
+    },
+    {
+      "component_id": "05",
+      "name": "axle C-clip",
+      "quantity": 6,
+      "material_override": "default",
+      "tolerance_test_required": true,
+      "notes": "Retainer for axle/clip pairs; print thin walls; verify snap over axle groove"
+    },
+    {
+      "component_id": "06",
+      "name": "axle pin",
+      "quantity": 3,
+      "material_override": "PLA",
+      "tolerance_test_required": true,
+      "notes": "Male mating feature for wheels/sprockets/C-clips; scale OD vs hole_comp"
+    },
+    {
+      "component_id": "07",
+      "name": "drive sprocket",
+      "quantity": 2,
+      "material_override": "PLA",
+      "tolerance_test_required": true,
+      "notes": "Engages track segments; axle bore tolerance-critical"
+    },
+    {
+      "component_id": "08",
+      "name": "idler sprocket",
+      "quantity": 2,
+      "material_override": "PLA",
+      "tolerance_test_required": true,
+      "notes": "Track tension/idle; axle bore tolerance-critical"
+    },
+    {
+      "component_id": "09",
+      "name": "track segment",
+      "quantity": 24,
+      "material_override": "PLA",
+      "tolerance_test_required": false,
+      "notes": "Closed-loop track chain; 12 per side typical"
+    },
+    {
+      "component_id": "10",
+      "name": "clicker leaf",
+      "quantity": 1,
+      "material_override": "PETG",
+      "tolerance_test_required": false,
+      "notes": "Fatigue-resistant flexure; MUST be PETG (not PLA)"
+    },
+    {
+      "component_id": "11",
+      "name": "turret",
+      "quantity": 1,
+      "material_override": "PLA",
+      "tolerance_test_required": false,
+      "notes": "Rotates on chassis turret ring after drivetrain assemble"
+    },
+    {
+      "component_id": "12",
+      "name": "barrel",
+      "quantity": 1,
+      "material_override": "PLA",
+      "tolerance_test_required": false,
+      "notes": "Press/snap into turret muzzle socket"
+    },
+    {
+      "component_id": "13",
+      "name": "hatch cover",
+      "quantity": 1,
+      "material_override": "PLA",
+      "tolerance_test_required": false,
+      "notes": "Final cosmetic/access cover on chassis or turret"
+    }
+  ],
+  "print_notes": {
+    "structural": "PLA — chassis, pods, wheels, sprockets, turret, barrel, hatch",
+    "fatigue": "PETG — clicker leaf only",
+    "tolerance": "Axle pins, C-clips, wheel/sprocket bores: print hole-compensation calibration set first",
+    "layer_height_default_mm": 0.2
+  },
+  "quantity_totals": {
+    "unique_components": 13,
+    "total_printed_parts": 48
+  }
+}
